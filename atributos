@@ -1,0 +1,24 @@
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS projeto_clientes;
+USE projeto_clientes;
+
+-- Criação da tabela principal: Clientes
+CREATE TABLE IF NOT EXISTS clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(20),
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Criação da tabela de histórico: para armazenar alterações
+CREATE TABLE IF NOT EXISTS historico_alteracoes (
+    id_registro INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    nome_antigo VARCHAR(100),
+    nome_novo VARCHAR(100),
+    email_antigo VARCHAR(100),
+    email_novo VARCHAR(100),
+    data_alteracao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usuario_alteracao VARCHAR(50) DEFAULT CURRENT_USER
+);
