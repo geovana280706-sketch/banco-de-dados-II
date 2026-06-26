@@ -1,0 +1,68 @@
+-- 1. Criar o banco de dados
+CREATE DATABASE IF NOT EXISTS turismo_recife;
+USE turismo_recife;
+
+-- 2. Criar tabelas com relacionamento por chave estrangeira
+
+-- Tabela principal: Cidades
+CREATE TABLE IF NOT EXISTS cidades (
+    id_cidade INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,
+    regiao VARCHAR(50) NOT NULL
+);
+
+-- Tabela secundária: Pontos Turísticos
+-- Relacionada com cidades através de id_cidade
+CREATE TABLE IF NOT EXISTS pontos_turisticos (
+    id_ponto INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    descricao TEXT,
+    bairro VARCHAR(100),
+    id_cidade INT,
+    -- Definindo a chave estrangeira
+    FOREIGN KEY (id_cidade) REFERENCES cidades(id_cidade)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+-- 3. Inserir dados nas tabelas
+INSERT INTO cidades (nome, estado, regiao) VALUES
+('Recife', 'PE', 'Nordeste'),
+('Olinda', 'PE', 'Nordeste'),
+('Porto de Galinhas', 'PE', 'Nordeste');
+
+INSERT INTO pontos_turisticos (nome, descricao, bairro, id_cidade) VALUES
+('Marco Zero', 'Ponto inicial das estradas e centro histórico do Recife', 'Recife Antigo', 1),
+('Paço do Frevo', 'Espaço cultural dedicado ao frevo, Patrimônio da Humanidade', 'Recife Antigo', 1),
+('Torre Malakoff', 'Antigo observatório, hoje centro cultural com vista panorâmica', 'Recife Antigo', 1),
+('Igreja de São Francisco', 'Uma das mais belas igrejas barrocas do Brasil', 'Sítio Histórico', 2),
+('Praia de Porto de Galinhas', 'Famosa por suas águas claras e piscinas naturais', 'Centro', 3);
+
+-- 4. Consultas usando JOIN para relacionar os dados
+
+-- Consulta 1: Listar pontos turísticos com sua respectiva cidade
+SELECT 
+    pt.nome AS ponto_turistico,
+    pt.bairro,
+    c.nome AS cidade,
+    c.estado
+FROM pontos_turisticos pt
+INNER JOIN cidades c ON pt.id_cidade = c.id_cidade;
+
+-- Consulta 2: Mostrar detalhes completos incluindo descrição
+SELECT 
+    pt.nome AS ponto,
+    pt.descricao,
+    c.nome AS cidade,
+    c.regiao
+FROM pontos_turisticos pt
+LEFT JOIN cidades c ON pt.id_cidade = c.id_cidade;
+
+-- Consulta 3: Filtrar apenas pontos da cidade do Recife
+SELECT 
+    pt.nome,
+    pt.bairro
+FROM pontos_turisticos pt
+INNER JOIN cidades c ON pt.id_cidade = c.id_cidade
+WHERE c.nome = 'Recife';
